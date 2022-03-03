@@ -1,5 +1,4 @@
 
-#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <SDL2/SDL.h>
@@ -8,14 +7,15 @@
 #include "include/extensions/stb_image.h"
 
 #include "include/sdlchecks.h"
+#include "include/render.h"
 #include "include/data.h"
 #include "include/la.h"
 
 
 
-const SDL_Colour windowColour = {.r = 0, .g = 0, .b = 0};
-const Uint32 fontColour = 0xFFFFFFFF;
-const char fontPath[] = "./resources/fonts/oldschool_white.png";
+const SDL_Colour WINDOW_COLOUR = {.r = 0, .g = 0, .b = 0};
+const Uint32 FONT_COLOUR = 0x00FF00DD;
+const char FONT_PATH[] = "./resources/fonts/oldschool_white.png";
 
 
 
@@ -54,67 +54,6 @@ SDL_Surface *surfaceFromFile(const char *path){
 
 
 
-void renderChar(SDL_Renderer *renderer,
-                SDL_Texture *font,
-                char c,
-                Vec2f pos,
-                Uint32 colour,
-                float scale){
-
-    const size_t index = c - 32;
-    const size_t row = index / FONT_COLS;
-    const size_t col = index % FONT_COLS;
-
-    const SDL_Rect source = {
-        .x = col * FONT_CHAR_WIDTH,
-        .y = row * FONT_CHAR_HEIGHT,
-        .w = FONT_CHAR_WIDTH,
-        .h = FONT_CHAR_HEIGHT
-    };
-
-    const SDL_Rect destination = {
-        .x = (int) floorf(pos.x),
-        .y = (int) floorf(pos.y),
-        .w = (int) floorf(FONT_CHAR_WIDTH * scale),
-        .h = (int) floorf(FONT_CHAR_WIDTH * scale)
-    };
-
-    SDL_SetTextureColorMod(font, 
-                           colour >> (8 * 2) & 0xFF,
-                           colour >> (8 * 1) & 0xFF,
-                           colour >> (8 * 0) & 0xFF);
-
-    scc(SDL_RenderCopy(renderer,
-                       font,
-                       &source, &destination));
-}
-
-
-
-void renderText(SDL_Renderer *renderer,
-                SDL_Texture *font,
-                const char *text,
-                Vec2f pos,
-                Uint32 colour,
-                float scale){
-
-    size_t n = strlen(text);
-    Vec2f pen = pos;
-
-    for(size_t i = 0; i < n; ++i){
-        renderChar(renderer,
-                   font,
-                   text[i],
-                   pen,
-                   colour,
-                   scale);
-
-        pen.x += FONT_CHAR_WIDTH * scale;
-    }
-}
-
-
-
 int main(void){
 
     scc(SDL_Init(SDL_INIT_VIDEO));
@@ -127,7 +66,7 @@ int main(void){
     SDL_Renderer *renderer = scp(SDL_CreateRenderer(window,
                                                     -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC));
 
-    SDL_Surface *fontSurface = surfaceFromFile(fontPath);
+    SDL_Surface *fontSurface = surfaceFromFile(FONT_PATH);
     
     SDL_Texture *fontTexture = scp(SDL_CreateTextureFromSurface(renderer, 
                                                                 fontSurface));
@@ -154,7 +93,7 @@ int main(void){
         } // end of pollevent loop
 
         scc(SDL_SetRenderDrawColor(renderer,
-                                   windowColour.r, windowColour.g, windowColour.b, 255));
+                                   WINDOW_COLOUR.r, WINDOW_COLOUR.g, WINDOW_COLOUR.b, 255));
         scc(SDL_RenderClear(renderer)); // clear the renderer
 
         SDL_Rect outputRect = {
@@ -164,9 +103,12 @@ int main(void){
             .h = fontRect.h * 5
         };
 
-        scc(SDL_RenderCopy(renderer,
-                           fontTexture,
-                           &outputRect, &outputRect));
+        renderText(renderer, 
+                   fontTexture,
+                   "Slugma Nuts",
+                   vec2f(0, 0),
+                   FONT_COLOUR,
+                   5.0f);
 
         SDL_RenderPresent(renderer);
     } // end of event loop

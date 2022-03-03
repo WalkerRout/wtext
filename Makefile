@@ -1,4 +1,4 @@
-OBJS = src/*.c src/include/extensions/*.c
+OBJS = src/*.c src/include/*.c src/include/extensions/*.c
 
 OBJ_NAME_WIN = bin/WText.exe
 OBJ_NAME_MAC = bin/WText
