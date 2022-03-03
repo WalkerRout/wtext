@@ -18,8 +18,13 @@ typedef struct {
 
 
 
+Font fontLoadFromFile(const char *path, 
+                      SDL_Renderer *renderer);
+
+
+
 void renderText(SDL_Renderer *renderer,
-                SDL_Texture *font,
+                Font *font,
                 const char *text,
                 Vec2f pos,
                 Uint32 colour,

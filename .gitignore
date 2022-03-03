@@ -3,6 +3,7 @@
 src/bin/
 .DS_Store
 .vscode
+*.swp
 
 # Object files
 *.o
