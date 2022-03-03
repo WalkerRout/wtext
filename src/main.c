@@ -1,43 +1,21 @@
 
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <SDL2/SDL.h>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "include/extensions/stb_image.h"
+
+#include "include/sdlchecks.h"
 #include "include/data.h"
+#include "include/la.h"
 
 
-const SDL_Colour windowColour = {.r = 100, .g = 100, .b = 100};
+
+const SDL_Colour windowColour = {.r = 0, .g = 0, .b = 0};
+const Uint32 fontColour = 0xFFFFFFFF;
 const char fontPath[] = "./resources/fonts/oldschool_white.png";
-
-
-
-// SDL Check Code -> scc
-int scc(int code){
-    if(code < 0){
-        fprintf(stderr, "SDL ERROR: %s\n",
-                SDL_GetError());
-        
-        exit(1);
-    }
-
-    return 0;
-}
-
-
-
-// SDL Check Pointer -> scp
-void* scp(void *ptr){
-    if(ptr == NULL){
-        fprintf(stderr, "SDL ERROR: %s\n",
-                SDL_GetError());
-        
-        exit(1);
-    }
-
-    return ptr;
-}
 
 
 
@@ -72,7 +50,68 @@ SDL_Surface *surfaceFromFile(const char *path){
                                         depth,
                                         pitch,
                                         rmask, gmask, bmask, amask));
-}   
+} 
+
+
+
+void renderChar(SDL_Renderer *renderer,
+                SDL_Texture *font,
+                char c,
+                Vec2f pos,
+                Uint32 colour,
+                float scale){
+
+    const size_t index = c - 32;
+    const size_t row = index / FONT_COLS;
+    const size_t col = index % FONT_COLS;
+
+    const SDL_Rect source = {
+        .x = col * FONT_CHAR_WIDTH,
+        .y = row * FONT_CHAR_HEIGHT,
+        .w = FONT_CHAR_WIDTH,
+        .h = FONT_CHAR_HEIGHT
+    };
+
+    const SDL_Rect destination = {
+        .x = (int) floorf(pos.x),
+        .y = (int) floorf(pos.y),
+        .w = (int) floorf(FONT_CHAR_WIDTH * scale),
+        .h = (int) floorf(FONT_CHAR_WIDTH * scale)
+    };
+
+    SDL_SetTextureColorMod(font, 
+                           colour >> (8 * 2) & 0xFF,
+                           colour >> (8 * 1) & 0xFF,
+                           colour >> (8 * 0) & 0xFF);
+
+    scc(SDL_RenderCopy(renderer,
+                       font,
+                       &source, &destination));
+}
+
+
+
+void renderText(SDL_Renderer *renderer,
+                SDL_Texture *font,
+                const char *text,
+                Vec2f pos,
+                Uint32 colour,
+                float scale){
+
+    size_t n = strlen(text);
+    Vec2f pen = pos;
+
+    for(size_t i = 0; i < n; ++i){
+        renderChar(renderer,
+                   font,
+                   text[i],
+                   pen,
+                   colour,
+                   scale);
+
+        pen.x += FONT_CHAR_WIDTH * scale;
+    }
+}
 
 
 
@@ -89,7 +128,16 @@ int main(void){
                                                     -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC));
 
     SDL_Surface *fontSurface = surfaceFromFile(fontPath);
-    SDL_Texture *texture = scp(SDL_CreateTextureFromSurface(renderer, fontSurface));
+    
+    SDL_Texture *fontTexture = scp(SDL_CreateTextureFromSurface(renderer, 
+                                                                fontSurface));
+
+    SDL_Rect fontRect = {
+        .x = 0,
+        .y = 0,
+        .w = fontSurface->w,
+        .h = fontSurface->h
+    };
 
     enum {STOPPED, RUNNING} state = RUNNING;
     while(state){
@@ -105,10 +153,21 @@ int main(void){
             } // end of switch
         } // end of pollevent loop
 
-        scc(SDL_SetRenderDrawColor(renderer, 
-                                   windowColour.r, windowColour.g, windowColour.b, 
-                                   255));
+        scc(SDL_SetRenderDrawColor(renderer,
+                                   windowColour.r, windowColour.g, windowColour.b, 255));
         scc(SDL_RenderClear(renderer)); // clear the renderer
+
+        SDL_Rect outputRect = {
+            .x = 0,
+            .y = 0,
+            .w = fontRect.w * 5,
+            .h = fontRect.h * 5
+        };
+
+        scc(SDL_RenderCopy(renderer,
+                           fontTexture,
+                           &outputRect, &outputRect));
+
         SDL_RenderPresent(renderer);
     } // end of event loop
 
