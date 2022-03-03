@@ -49,7 +49,7 @@ Font fontLoadFromFile(const char *path, SDL_Renderer *renderer){
 
     SDL_Surface *fontSurface = surfaceFromFile(path);
 
-    // This line is causing a segmentation fault
+    // This line is causing a segmentation fault (the scp(...) section, specifically)
     /*
     font.spriteSheet = scp(SDL_CreateTextureFromSurface(renderer, 
                                                         fontSurface));
