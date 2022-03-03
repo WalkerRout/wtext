@@ -3,19 +3,26 @@
 #include <stdlib.h>
 #include <SDL2/SDL.h>
 
+#define STB_IMAGE_IMPLEMENTATION
+#include "include/extensions/stb_image.h"
 #include "include/data.h"
 
 
 const SDL_Colour windowColour = {.r = 100, .g = 100, .b = 100};
+const char fontPath[] = "./resources/fonts/oldschool_white.png";
+
+
 
 // SDL Check Code -> scc
-void scc(int code){
+int scc(int code){
     if(code < 0){
         fprintf(stderr, "SDL ERROR: %s\n",
                 SDL_GetError());
         
         exit(1);
     }
+
+    return 0;
 }
 
 
@@ -34,7 +41,42 @@ void* scp(void *ptr){
 
 
 
-int main(int argc, char *argv[]){
+SDL_Surface *surfaceFromFile(const char *path){
+    int width, height, n, depth, pitch;
+
+    unsigned char *pixels = stbi_load(path, &width, &height, &n, STBI_rgb_alpha); // STBI_rgb_alpha = 4
+    
+    if(pixels == NULL){
+        fprintf(stderr, "ERROR: could not load file %s: %s\n", 
+                path, stbi_failure_reason());
+        exit(1);
+    }
+
+    #if SDL_BYTEORDER == SDL_BIG_ENDIAN
+        const Uint32 rmask = 0xff000000;
+        const Uint32 gmask = 0x00ff0000;
+        const Uint32 bmask = 0x0000ff00;
+        const Uint32 amask = 0x000000ff;
+    #else // little endian, like x86
+        const Uint32 rmask = 0x000000ff;
+        const Uint32 gmask = 0x0000ff00;
+        const Uint32 bmask = 0x00ff0000;
+        const Uint32 amask = 0xff000000;
+    #endif
+
+    depth = 32;
+    pitch = 4*width;
+
+    return scp(SDL_CreateRGBSurfaceFrom((void*) pixels,
+                                        width, height,
+                                        depth,
+                                        pitch,
+                                        rmask, gmask, bmask, amask));
+}   
+
+
+
+int main(void){
 
     scc(SDL_Init(SDL_INIT_VIDEO));
 
@@ -46,7 +88,8 @@ int main(int argc, char *argv[]){
     SDL_Renderer *renderer = scp(SDL_CreateRenderer(window,
                                                     -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC));
 
-
+    SDL_Surface *fontSurface = surfaceFromFile(fontPath);
+    SDL_Texture *texture = scp(SDL_CreateTextureFromSurface(renderer, fontSurface));
 
     enum {STOPPED, RUNNING} state = RUNNING;
     while(state){
@@ -73,3 +116,5 @@ int main(int argc, char *argv[]){
     SDL_Quit();
 	return 0;
 }
+
+
