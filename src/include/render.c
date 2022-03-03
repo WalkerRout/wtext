@@ -10,7 +10,8 @@ void renderChar(SDL_Renderer *renderer,
                 Uint32 colour,
                 float scale){
 
-    const size_t index = c - 32;
+    const size_t index = c - ASCII_DISPLAY_LOW;
+    
     const size_t row = index / FONT_COLS;
     const size_t col = index % FONT_COLS;
 

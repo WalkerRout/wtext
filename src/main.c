@@ -15,7 +15,7 @@
 
 const SDL_Colour WINDOW_COLOUR = {.r = 0, .g = 0, .b = 0};
 const Uint32 FONT_COLOUR = 0x00FF00DD;
-const char FONT_PATH[] = "./resources/fonts/oldschool_white.png";
+const char FONT_PATH[] = "./resources/fonts/oldschool_white.png"
 
 
 

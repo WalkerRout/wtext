@@ -11,6 +11,13 @@
 
 
 
+typedef struct {
+    SDL_Texture *spriteSheet;
+    SDL_Rect glyphTable[ASCII_DISPLAY_HIGH - ASCII_DISPLAY_LOW + 1];
+} Font;
+
+
+
 void renderText(SDL_Renderer *renderer,
                 SDL_Texture *font,
                 const char *text,
