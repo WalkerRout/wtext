@@ -48,10 +48,14 @@ Font fontLoadFromFile(const char *path, SDL_Renderer *renderer){
     Font font = {0};
 
     SDL_Surface *fontSurface = surfaceFromFile(path);
+
+    // This line is causing a segmentation fault
+    /*
     font.spriteSheet = scp(SDL_CreateTextureFromSurface(renderer, 
                                                         fontSurface));
 
     SDL_FreeSurface(fontSurface);
+    */
 
     for(size_t ascii = ASCII_DISPLAY_LOW; ascii <= ASCII_DISPLAY_HIGH; ascii++){
         const size_t index = ascii - ASCII_DISPLAY_LOW;
@@ -111,7 +115,7 @@ void renderText(SDL_Renderer *renderer,
 
     size_t n = strlen(text);
     Vec2f pen = pos;
-    
+
     for(size_t i = 0; i < n; i++){
         renderChar(renderer,
                    font,
