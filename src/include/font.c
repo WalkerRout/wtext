@@ -1,10 +1,11 @@
-/*
+
 #include <stdio.h>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "extensions/stb_image.h"
 
 #include "font.h"
+#include "sdlchecks.h"
 
 
 
@@ -43,18 +44,14 @@ SDL_Surface *surfaceFromFile(const char *path){
 
 
 
-void constructFontSpriteSheet(Font *font, SDL_Renderer *renderer, const char *path){
+void constructFont(Font *font, SDL_Renderer *renderer, const char *path){
+
     SDL_Surface *fontSurface = scp(surfaceFromFile(path));
 
     font->spriteSheet = scp(SDL_CreateTextureFromSurface(renderer,
-                                                        fontSurface));
-    
+                                                         fontSurface));
+
     SDL_FreeSurface(fontSurface);
-}
-
-
-
-void constructFontGlyphTable(Font *font){
 
     for(size_t ascii = ASCII_DISPLAY_LOW; ascii <= ASCII_DISPLAY_HIGH; ascii++){
         const size_t index = ascii - ASCII_DISPLAY_LOW;
@@ -69,17 +66,4 @@ void constructFontGlyphTable(Font *font){
             .h = FONT_CHAR_HEIGHT
         };
     }
-
 }
-
-
-
-Font constructFontFromFile(SDL_Renderer *renderer, const char *path){
-    Font font = {0};
-
-    constructFontSpriteSheet(&font, renderer, path);
-    constructFontGlyphTable(&font);
-
-    return font;
-}
-*/

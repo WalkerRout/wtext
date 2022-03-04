@@ -22,6 +22,13 @@
 #define BUFFER_CAPACITY 1024
 
 
+
+typedef struct {
+    float x, y;
+} Vec2f;
+
+
+
 typedef struct {
     SDL_Texture *spriteSheet;
     SDL_Rect glyphTable[ASCII_DISPLAY_HIGH - ASCII_DISPLAY_LOW + 1];

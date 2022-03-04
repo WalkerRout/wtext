@@ -2,11 +2,7 @@
 #ifndef LA_H
 #define LA_H
 
-
-typedef struct {
-    float x, y;
-} Vec2f;
-
+#include "data.h"
 
 
 Vec2f vec2f(float x, float y);
