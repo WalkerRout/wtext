@@ -2,26 +2,10 @@
 #ifndef RENDER_H
 #define RENDER_H
 
-#include <stdio.h>
-#include <math.h>
 #include <SDL2/SDL.h>
 
 #include "data.h"
 #include "la.h"
-
-
-
-typedef struct {
-    SDL_Texture *spriteSheet;
-    SDL_Rect glyphTable[ASCII_DISPLAY_HIGH - ASCII_DISPLAY_LOW + 1];
-} Font;
-
-
-
-Font fontLoadFromFile(const char *path, 
-                      SDL_Renderer *renderer);
-
-
 
 void renderText(SDL_Renderer *renderer,
                 Font *font,
@@ -29,5 +13,15 @@ void renderText(SDL_Renderer *renderer,
                 Vec2f pos,
                 Uint32 colour,
                 float scale);
+
+void renderTextSized(SDL_Renderer *renderer,
+                     Font *font,
+                     const char *text,
+                     size_t textSize,
+                     Vec2f pos,
+                     Uint32 colour,
+                     float scale);
+
+//void renderCursor();
 
 #endif
