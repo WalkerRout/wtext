@@ -57,6 +57,14 @@ int main(void){
                             bufferCursor = bufferSize;
                         } break;
 
+                        case SDLK_PLUS: {
+
+                        } break;
+
+                        case SDLK_MINUS: {
+
+                        } break;
+
                         case SDLK_RIGHT: {
                             if(bufferCursor >= 0){
                                 ++bufferCursor;
@@ -68,6 +76,7 @@ int main(void){
                                 --bufferCursor;
                             }
                         } break;
+
 
                         default: {}
 
@@ -86,6 +95,7 @@ int main(void){
 
                     memcpy(buffer + bufferSize, event.text.text, textSize);
                     bufferSize += textSize;
+                    
                     bufferCursor = bufferSize;
                 } break;
                 
