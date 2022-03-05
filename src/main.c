@@ -11,10 +11,9 @@
 #include "include/la.h"
 
 
-
-const SDL_Colour WINDOW_COLOUR = {.r = 0, .g = 0, .b = 0};
-const Uint32 FONT_COLOUR = 0xFFFFFFFF;
-const char FONT_PATH[] = "./resources/fonts/oldschool_white.png";
+const char FONT_PATH[] = "./resources/fonts/oldschool.png";
+//const char FONT_PATH[] = "./resources/fonts/cellphone.png";
+//const char FONT_PATH[] = "./resources/fonts/futuristic.png";
 
 char buffer[BUFFER_CAPACITY];
 size_t bufferCursor = 0;
@@ -54,8 +53,26 @@ int main(void){
                             if(bufferSize > 0){
                                 bufferSize -= 1;
                             }
+
+                            bufferCursor = bufferSize;
                         } break;
+
+                        case SDLK_RIGHT: {
+                            if(bufferCursor >= 0){
+                                ++bufferCursor;
+                            }
+                        } break;
+
+                        case SDLK_LEFT: {
+                            if(bufferCursor > 0){
+                                --bufferCursor;
+                            }
+                        } break;
+
+                        default: {}
+
                     }
+
                 } break;
                 
                 case SDL_TEXTINPUT: {
@@ -69,7 +86,7 @@ int main(void){
 
                     memcpy(buffer + bufferSize, event.text.text, textSize);
                     bufferSize += textSize;
-
+                    bufferCursor = bufferSize;
                 } break;
                 
                 default: {}
@@ -77,7 +94,7 @@ int main(void){
         } // end of pollevent loop
 
         scc(SDL_SetRenderDrawColor(renderer,
-                                   WINDOW_COLOUR.r, WINDOW_COLOUR.g, WINDOW_COLOUR.b, 255));
+                                   UNHEX_UINT32_ARGS(WINDOW_COLOUR)));
         scc(SDL_RenderClear(renderer)); // clear the renderer
         
         
@@ -89,15 +106,16 @@ int main(void){
                         FONT_COLOUR,
                         FONT_SCALE);
 
-        //renderCursor(renderer);
-        
-        
+        renderCursor(renderer, 
+                     &bufferCursor);
 
         SDL_RenderPresent(renderer);
     } // end of event loop
 
-
-    SDL_Quit();
+    SDL_DestroyWindow(window);
+    SDL_DestroyRenderer(renderer);
+    
+    SDL_Quit(); //atexit();
 	return 0;
 }
 

@@ -3,7 +3,9 @@
 #include <stdio.h>
 #include <math.h>
 
+#include "sdlchecks.h"
 #include "render.h"
+#include "data.h"
 
 
 
@@ -76,4 +78,21 @@ void renderText(SDL_Renderer *renderer,
                     pos, 
                     colour, 
                     scale);
+}
+
+
+
+void renderCursor(SDL_Renderer *renderer, size_t *bufferCursor){
+    
+    const SDL_Rect rect = {
+        .x = (int) floorf(*bufferCursor * FONT_CHAR_WIDTH * FONT_SCALE),
+        .y = 0,
+        .w = FONT_CHAR_WIDTH * FONT_SCALE,
+        .h = FONT_CHAR_HEIGHT * FONT_SCALE
+    };
+
+    scc(SDL_SetRenderDrawColor(renderer,
+                               UNHEX_UINT32_ARGS(CURSOR_COLOUR)));
+
+    scc(SDL_RenderFillRect(renderer, &rect));
 }

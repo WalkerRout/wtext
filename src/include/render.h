@@ -4,7 +4,7 @@
 
 #include <SDL2/SDL.h>
 
-#include "data.h"
+#include "font.h"
 #include "la.h"
 
 void renderText(SDL_Renderer *renderer,
@@ -22,6 +22,7 @@ void renderTextSized(SDL_Renderer *renderer,
                      Uint32 colour,
                      float scale);
 
-//void renderCursor();
+void renderCursor(SDL_Renderer *renderer,
+                  size_t *bufferCursor);
 
 #endif
